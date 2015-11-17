@@ -1,0 +1,27 @@
+{
+  "name": "high-five-the-archive",
+  "version": "1.0.0",
+  "description": "A hack day project",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guardian/high-five-the-archive.git"
+  },
+  "author": "Gareth Trufitt, Phil Mcmahon, Jenny Sivapalan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guardian/high-five-the-archive/issues"
+  },
+  "homepage": "https://github.com/guardian/high-five-the-archive#readme"
+}
