@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+
+  "name": "High five the archive!",
+  "description": "The winning hack at the guardian's November 2015 hack day.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "delorian-icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
