@@ -32,13 +32,8 @@ chrome.downloads.onChanged.addListener(function(delta) {
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
 
-
   var file_id = tab.url.split("docview")[1].split('/')[1];
-  var metadataUrl = tab.url.replace('docview', 'citation');
-  jQuery.get(metadataUrl).then(function(resp) {
-    console.log(resp);
-  })
-
+  // var metadataUrl = tab.url.replace('docview', 'citation');
 
   chrome.downloads.download({url: info.linkUrl, filename:file_id+'.pdf'}, function(downloadId) {
     var ids = getOpeningIds();

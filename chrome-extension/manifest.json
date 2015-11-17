@@ -15,11 +15,18 @@
   "permissions": [
     "downloads",
     "downloads.open",
-    "contextMenus"
+    "contextMenus",
+    "activeTab"
   ],
   "icons": {
           "16": "delorian-icon-16x16.png",
           "48": "delorian-icon-48x48.png",
           "128": "delorian-icon-128x128.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://", "https://"],
+      "js": ["jquery-1.11.3.min.js", "contentScript.js"]
+    }
+  ],
 }
