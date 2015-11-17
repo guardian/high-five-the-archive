@@ -8,3 +8,5 @@ A simple hack to make the archived Guardian more accessible.
 - `brew install tesseract --all-languages` - For OCR
 - `npm install -g nodemon` to use nodemon to allow watching node files
 - Run `npm start` to run the server
+
+This project uses the icon DeLorean by Michael Norris from the Noun Project
