@@ -36,8 +36,6 @@ function convertToImage(filePath, opts) {
 				console.log(err)
 				reject(err);
 			}
-console.log('what')
-console.log(opts.outId)
 			resolve({outImage: outImage, outId: opts.outId});
 		})
 	}
@@ -55,6 +53,10 @@ function ocrImage(imgObj) {
 		    }
 		});
 	})
+}
+
+function storeMetadata(postData) {
+	store.put('images.metadata.' + postData, postData);
 }
 
 // ROUTES FOR OUR API
@@ -87,6 +89,11 @@ router.get('/pdf', function(req, res) {
 
 router.get('/images/:id', function(req, res) {
 	res.send(store.get('images.ocrText.' + req.params.id))
+});
+
+router.post('/item', function(req, res) {
+	storeMetadata(req.body);
+	res.send('Saved');
 });
 
 // REGISTER OUR ROUTES -------------------------------
