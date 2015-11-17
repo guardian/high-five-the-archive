@@ -43,6 +43,6 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
 
 chrome.contextMenus.create({
   id: 'open',
-  title: chrome.i18n.getMessage('openContextMenuTitle'),
-  contexts: ['link'],
+  title: "High five the archive!",
+  contexts: ['link']
 });

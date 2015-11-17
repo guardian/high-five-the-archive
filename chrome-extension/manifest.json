@@ -16,5 +16,10 @@
     "downloads",
     "downloads.open",
     "contextMenus"
-  ]
+  ],
+  "icons": {
+          "16": "delorian-icon-16x16.png",
+          "48": "delorian-icon-48x48.png",
+          "128": "delorian-icon-128x128.png"
+  }
 }
