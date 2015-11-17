@@ -31,7 +31,9 @@ chrome.downloads.onChanged.addListener(function(delta) {
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
-  chrome.downloads.download({url: info.linkUrl}, function(downloadId) {
+
+  var file_id = tab.url.split("docview")[1].split('/')[1];
+  chrome.downloads.download({url: info.linkUrl, filename:file_id+'.pdf'}, function(downloadId) {
     var ids = getOpeningIds();
     if (ids.indexOf(downloadId) >= 0) {
       return;
