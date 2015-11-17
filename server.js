@@ -26,26 +26,35 @@ var port = process.env.PORT || 8080;        // set our port
 // =============================================================================
 
 function convertToImage(filePath, opts) {
-	var outImage = 'tmp/' + opts.outId + '.png';
-	console.log('Converting an image');
+	return function(resolve, reject) {
+		var outImage = 'tmp/' + opts.outId + '.png';
+		console.log('Converting an image');
 
-	exec('convert -density 300 ' + filePath + ' -depth 8' + outImage, function(err, stdout, stderr){
-		if (err) {
-			console.log('error');
-		}
-
-		ocrImage(outImage);
-	})
+		exec('convert -density 300 ' + filePath + ' -depth 8 ' + outImage, function(err, stdout, stderr){
+			if (err) {
+				console.log('error');
+				console.log(err)
+				reject(err);
+			}
+console.log('what')
+console.log(opts.outId)
+			resolve({outImage: outImage, outId: opts.outId});
+		})
+	}
 }
 
-function ocrImage(outImage) {
-	tesseract.process(__dirname + '/' + outImage, function(err, text) {
-	    if(err) {
-	        console.error(err);
-	    } else {
-	        store.put('images.ocrText.' + opts.outId, text);
-	    }
-	});
+function ocrImage(imgObj) {
+	return new Promise(function(resolve, reject) {
+		tesseract.process(__dirname + '/' + imgObj.outImage, function(err, text) {
+		    if(err) {
+				console.error(err);
+				reject(err);
+		    } else {
+		        store.put('images.ocrText.' + imgObj.outId, text);
+		        resolve(imgObj.outId  + ' stored');
+		    }
+		});
+	})
 }
 
 // ROUTES FOR OUR API
@@ -56,12 +65,24 @@ var router = express.Router();
 
 router.get('/pdf', function(req, res) {
 	// Assume we have a pdf at this point
-	var imagePath = 'testPdfs/dsg.pdf',
+	var imagePath = 'testPdfs/testtest.pdf',
 		outId = imagePath.match('/([^/\?]+)\\.').pop();
+		convertImage = new Promise(convertToImage(imagePath, {
+			outId: outId
+		}));
 
-	res.send(convertToImage(imagePath, {
-		outId: outId
-	}))
+	convertImage
+		.then(ocrImage)
+		.then(function(msg){
+			console.log('Success')
+			console.log(msg);
+			res.send('success');
+		})
+		.catch(function(err){
+			console.log('Fail')
+			console.log(err);
+			res.send('FAIL');
+		})
 });
 
 router.get('/images/:id', function(req, res) {
