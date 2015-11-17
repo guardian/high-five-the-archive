@@ -5,7 +5,7 @@
   "description": "The winning hack at the guardian's November 2015 hack day.",
   "version": "1.0",
   "background": {
-    "scripts": ["eventPage.js"],
+    "scripts": ["eventPage.js", "jquery-1.11.3.min.js"],
     "persistent": false
   },
   "browser_action": {
