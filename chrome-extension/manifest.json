@@ -13,8 +13,8 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "activeTab",
-    "https://ajax.googleapis.com/",
+    "downloads",
+    "downloads.open",
     "contextMenus"
   ]
 }
