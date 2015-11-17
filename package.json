@@ -4,15 +4,13 @@
   "description": "A hack day project",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.13.3"
-  },
-  "dependencies": {
     "body-parser": "^1.14.1",
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "node-tesseract": "^0.2.7"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +21,6 @@
   "bugs": {
     "url": "https://github.com/guardian/high-five-the-archive/issues"
   },
-  "homepage": "https://github.com/guardian/high-five-the-archive#readme"
+  "homepage": "https://github.com/guardian/high-five-the-archive#readme",
+  "engine": "node 5.0.0"
 }
