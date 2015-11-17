@@ -6,10 +6,13 @@ var exports = module.exports = {};
 
 // call the packages we need
 var express    	= require('express');        // call express
-var app        	= express();                 // define our app using express
 var bodyParser 	= require('body-parser');
 var exec 		= require('child_process').exec
 var tesseract   = require('node-tesseract');
+var storage 	= require('node-storage');
+
+var app        	= express();                 // define our app using express
+var store 		= new storage('store/data');
 
 
 // configure app to use bodyParser()
@@ -23,20 +26,26 @@ var port = process.env.PORT || 8080;        // set our port
 // =============================================================================
 
 function convertToImage(filePath, opts) {
-	exec('convert -density 300 ' + filePath + ' -depth 8 tmp/' + opts.outId + '.png', function(err, stdout, stderr){
-		if (err) { 
-			console.log('It did not work');
-			return 'lose'
-		};
+	var outImage = 'tmp/' + opts.outId + '.png';
+	console.log('Converting an image');
 
-		tesseract.process(__dirname + '/tmp/'  + opts.outId + '.png', function(err, text) {
-		    if(err) {
-		        console.error(err);
-		    } else {
-		        console.log(text);
-		    }
-		});
+	exec('convert -density 300 ' + filePath + ' -depth 8' + outImage, function(err, stdout, stderr){
+		if (err) {
+			console.log('error');
+		}
+
+		ocrImage(outImage);
 	})
+}
+
+function ocrImage(outImage) {
+	tesseract.process(__dirname + '/' + outImage, function(err, text) {
+	    if(err) {
+	        console.error(err);
+	    } else {
+	        store.put('images.ocrText.' + opts.outId, text);
+	    }
+	});
 }
 
 // ROUTES FOR OUR API
@@ -45,17 +54,19 @@ function convertToImage(filePath, opts) {
 // get an instance of the express Router
 var router = express.Router();
 
-// The url github hits
 router.get('/pdf', function(req, res) {
 	// Assume we have a pdf at this point
-	var imagePath = 'testPdfs/another.pdf',
+	var imagePath = 'testPdfs/dsg.pdf',
 		outId = imagePath.match('/([^/\?]+)\\.').pop();
 
 	res.send(convertToImage(imagePath, {
 		outId: outId
 	}))
 });
-// more routes for our API will happen here
+
+router.get('/images/:id', function(req, res) {
+	res.send(store.get('images.ocrText.' + req.params.id))
+});
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
