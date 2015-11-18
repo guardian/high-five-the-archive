@@ -108,6 +108,7 @@ router.post('/item/:id', function(req, res) {
 });
 
 app.get('/high-five/:id', function(req, res) {
+	var id = req.params.id;
 	var metadata = store.get('images.metadata.' + id);
 	var originalImage = 'original' + id
 
