@@ -55,7 +55,7 @@ function convertToImage(filePath, opts) {
 
 function ocrImage(imgObj) {
 	return new Promise(function(resolve, reject) {
-		tesseract.process(__dirname + '/public/' + imgObj.outImage, function(err, text) {
+		tesseract.process(__dirname + '/' + imgObj.outImage, function(err, text) {
 		    if(err) {
 				console.error(err);
 				reject(err);
@@ -116,7 +116,7 @@ function checkForNewImage() {
 	pdfArr.forEach(function(fileName){
 		if (imageArr.indexOf(fileName) === -1) {
 
-			var imagePath = 'public/testPdfs/' + fileName + '.pdf',
+			var imagePath = 'public/original/' + fileName + '.pdf',
 				outId = getId(imagePath),
 				convertImage = new Promise(convertToImage(imagePath, {
 					outId: outId
