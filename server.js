@@ -10,10 +10,14 @@ var bodyParser 	= require('body-parser');
 var exec 		= require('child_process').exec
 var tesseract   = require('node-tesseract');
 var storage 	= require('node-storage');
-var exphbs  = require('express-handlebars');
+var exphbs  	= require('express-handlebars');
+var fs 			= require('fs');
 
 var app        	= express();                 // define our app using express
 var store 		= new storage('store/data');
+
+var pdfArr = [];
+var imageArr = [];
 
 // Configure our templating
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -41,6 +45,7 @@ function convertToImage(filePath, opts) {
 				reject(err);
 			}
 			resolve({outImage: outImage, outId: opts.outId});
+			imageArr.push(opts.outId);
 		})
 	}
 }
@@ -63,6 +68,73 @@ function storeMetadata(postData) {
 	store.put('images.metadata.' + postData, postData);
 }
 
+function getId(path) {
+	var matchArr = path.match(/([^\/]+)(?=\.\w+$)/);
+	return (matchArr) ? matchArr[0] : false;
+}
+
+function getFileList(path) {
+	return function (resolve, reject) {
+		var thisArr = [];
+
+		fs.readdir(path,function(err,files){
+	    	if(err) throw err;
+	    	files.forEach(function(file){
+	    		var id = getId(file);
+
+	    		if (id) {
+	    			thisArr.push(id);
+	    		}
+	    	});
+	    	resolve(thisArr);
+	 	});
+
+	}
+}
+
+// When our app starts up, create array of current images
+function checkFiles() {
+   	
+	var pdfPromise = new Promise(getFileList('./testPdfs/')),
+		imagePromise = new Promise(getFileList('./tmp/'));
+
+		Promise.all([pdfPromise, imagePromise]).then(function(value){
+			pdfArr = value[0];
+			imageArr = value[1];
+
+			checkForNewImage();
+
+		});
+
+};
+
+// Check if there are any new pdfs in our folder
+function checkForNewImage() {
+	pdfArr.forEach(function(fileName){
+		if (imageArr.indexOf(fileName) === -1) {
+
+			var imagePath = 'testPdfs/' + fileName + '.pdf',
+				outId = getId(imagePath),
+				convertImage = new Promise(convertToImage(imagePath, {
+					outId: outId
+				}));
+
+			convertImage
+				.then(ocrImage)
+				.then(function(msg){
+					console.log('Success')
+					console.log(msg);
+					res.send('success');
+				})
+				.catch(function(err){
+					console.log('Fail')
+					console.log(err);
+					res.send('FAIL');
+				})
+		}
+	})
+}
+
 // ROUTES FOR OUR APP
 // =============================================================================
 
@@ -79,7 +151,7 @@ var router = express.Router();
 router.get('/pdf', function(req, res) {
 	// Assume we have a pdf at this point
 	var imagePath = 'testPdfs/testtest.pdf',
-		outId = imagePath.match('/([^/\?]+)\\.').pop();
+		outId = getId(imagePath),
 		convertImage = new Promise(convertToImage(imagePath, {
 			outId: outId
 		}));
@@ -115,3 +187,8 @@ app.use('/api', router);
 // =============================================================================
 app.listen(port);
 console.log('Magic happens on port ' + port);
+checkFiles();
+setInterval(function(){
+	console.log('interval')
+	checkFiles();
+}, 5000);
