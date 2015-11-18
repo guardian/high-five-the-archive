@@ -33,9 +33,12 @@ var port = process.env.PORT || 8090;        // set our port
 // APP FUNCTIONS
 // =============================================================================
 
+app.use(express.static('public/'));
+
+
 function convertToImage(filePath, opts) {
 	return function(resolve, reject) {
-		var outImage = 'tmp/' + opts.outId + '.png';
+		var outImage = 'public/tmp/' + opts.outId + '.png';
 		console.log('Converting an image');
 
 		exec('convert -density 300 ' + filePath + ' -depth 8 ' + outImage, function(err, stdout, stderr){
@@ -52,7 +55,7 @@ function convertToImage(filePath, opts) {
 
 function ocrImage(imgObj) {
 	return new Promise(function(resolve, reject) {
-		tesseract.process(__dirname + '/' + imgObj.outImage, function(err, text) {
+		tesseract.process(__dirname + '/public/' + imgObj.outImage, function(err, text) {
 		    if(err) {
 				console.error(err);
 				reject(err);
@@ -95,8 +98,8 @@ function getFileList(path) {
 // When our app starts up, create array of current images
 function checkFiles() {
    	
-	var pdfPromise = new Promise(getFileList('./testPdfs/')),
-		imagePromise = new Promise(getFileList('./tmp/'));
+	var pdfPromise = new Promise(getFileList('./public/original/')),
+		imagePromise = new Promise(getFileList('./public/tmp/'));
 
 		Promise.all([pdfPromise, imagePromise]).then(function(value){
 			pdfArr = value[0];
@@ -113,7 +116,7 @@ function checkForNewImage() {
 	pdfArr.forEach(function(fileName){
 		if (imageArr.indexOf(fileName) === -1) {
 
-			var imagePath = 'testPdfs/' + fileName + '.pdf',
+			var imagePath = 'public/testPdfs/' + fileName + '.pdf',
 				outId = getId(imagePath),
 				convertImage = new Promise(convertToImage(imagePath, {
 					outId: outId
@@ -142,6 +145,16 @@ app.get('/', function (req, res) {
     res.render('home');
 });
 
+
+app.get('/high-five/:id', function(req, res) {
+	var metadata = store.get('images.metadata.' + req.params.id);
+	var originalPdf = '/original/' + req.params.id + '.pdf'
+	var imageUrl = '/tmp/' + req.params.id + '.png'
+
+	res.render('index', {metadata: metadata, imageUrl: imageUrl, pdfUrl: originalPdf})
+});
+
+
 // ROUTES FOR OUR API
 // =============================================================================
 
@@ -150,7 +163,7 @@ var router = express.Router();
 
 router.get('/pdf', function(req, res) {
 	// Assume we have a pdf at this point
-	var imagePath = 'testPdfs/testtest.pdf',
+	var imagePath = 'original/testtest.pdf',
 		outId = getId(imagePath),
 		convertImage = new Promise(convertToImage(imagePath, {
 			outId: outId
@@ -177,13 +190,6 @@ router.get('/images/:id', function(req, res) {
 router.post('/item/:id', function(req, res) {
 	storeMetadata(req.body, req.params.id);
 	res.send('Saved');
-});
-
-app.get('/high-five/:id', function(req, res) {
-	var metadata = store.get('images.metadata.' + id);
-	var originalImage = 'original' + id
-
-	res.render('index', {metadata: metadata, imageUrl: originalImage})
 });
 
 // REGISTER OUR ROUTES -------------------------------
