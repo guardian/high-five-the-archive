@@ -1,5 +1,5 @@
 node_modules
+originals
+store
+store/data
 .DS_Store
-originals/*
-store/*
-store/data/*

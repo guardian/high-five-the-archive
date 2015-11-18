@@ -107,6 +107,13 @@ router.post('/item/:id', function(req, res) {
 	res.send('Saved');
 });
 
+app.get('/high-five/:id', function(req, res) {
+	var metadata = store.get('images.metadata.' + id);
+	var originalImage = 'original' + id
+
+	res.render('index', {metadata: metadata, imageUrl: originalImage})
+});
+
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', router);
