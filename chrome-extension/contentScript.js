@@ -6,6 +6,9 @@ return new Za.prototype.init(a,b,c,d,e)}m.Tween=Za,Za.prototype={constructor:Za,
 
 
 function getStuffed() {
+
+    var url = window.location.href;
+    var file_id = url.split("docview")[1].split('/')[1];
     // alert('getting stuff!');
     var fields = ["Title", "Publication title", "First page", "Number of pages", "Publication year",
     "Publication date", "Year", "Publisher", "Place of publication", "Country of publication", 
@@ -18,7 +21,7 @@ function getStuffed() {
         info.push({fieldName: fields[i-1], value: metadataHTML[i].innerText.replace(fields[i-1] + ' ', '')});
     }
     console.log(info);
-    jQuery.post("http://httpbin.org/post", JSON.stringify(info), function(resp) {
+    jQuery.post("http://httpbin.org/post", {id: file_id, metadata: JSON.stringify(info)}, function(resp) {
         console.log(resp);
     })
 
