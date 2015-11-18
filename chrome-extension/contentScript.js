@@ -7,13 +7,44 @@ return new Za.prototype.init(a,b,c,d,e)}m.Tween=Za,Za.prototype={constructor:Za,
 
 function getStuffed() {
     // alert('getting stuff!');
-    var tableHTML = document.getElementsByClassName('docViewFullCitation')
-    // console.log($('indexingSectionDiv_prod.academic_MSTAR_185788508'));
-    // console.log(tableHTML);
-    jQuery.post("http://httpbin.org/", {'table' : tableHTML}, function(resp) {
+    var fields = ["Title", "Publication title", "First page", "Number of pages", "Publication year",
+    "Publication date", "Year", "Publisher", "Place of publication", "Country of publication", 
+    "Publication subject",
+    "ISSN", "Source type", "Language of publication", "Document type", "ProQuest document",
+    "Document URL", "Copyright", "Last updated", "Database"];
+    var metadataHTML = document.querySelectorAll('.docViewFullCitation')[0].children[2].children;
+    var info = [];
+    for (var i = 1; i < metadataHTML.length; i++) {
+        info.push({fieldName: fields[i-1], value: metadataHTML[i].innerText.replace(fields[i-1] + ' ', '')});
+    }
+    console.log(info);
+    jQuery.post("http://httpbin.org/post", JSON.stringify(info), function(resp) {
         console.log(resp);
-    });
-    return tableHTML;
+    })
+
+    return info;
 }
 
 getStuffed();
+
+// 0: ""
+// 1: "Title Boris a cheat admits Russia"
+// 2: "Publication title The Guardian (1959-2003)"
+// 3: "First page 17"
+// 4: "Number of pages 1"
+// 5: "Publication year 1976"
+// 6: "Publication date Jul 21, 1976"
+// 7: "Year 1976"
+// 8: "Publisher Guardian News & Media Limited"
+// 9: "Place of publication London (UK)"
+// 10: "Country of publication United Kingdom"
+// 11: "Publication subject Literary And Political Reviews, General Interest Periodicals--Great Britain"
+// 12: "ISSN 02613077"
+// 13: "Source type Historical Newspapers"
+// 14: "Language of publication English"
+// 15: "Document type article"
+// 16: "ProQuest document ID 185788508"
+// 17: "Document URL http://search.proquest.com/docview/185788508?accountid=133107"
+// 18: "Copyright Copyright Guardian Newspapers Limited Jul 21, 1976"
+// 19: "Last updated 2010-06-04"
+// 20: "Database ProQuest Historical Newspapers: The Guardian and The Observer"
