@@ -10,10 +10,14 @@ var bodyParser 	= require('body-parser');
 var exec 		= require('child_process').exec
 var tesseract   = require('node-tesseract');
 var storage 	= require('node-storage');
+var exphbs  = require('express-handlebars');
 
 var app        	= express();                 // define our app using express
 var store 		= new storage('store/data');
 
+// Configure our templating
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -58,6 +62,13 @@ function ocrImage(imgObj) {
 function storeMetadata(postData) {
 	store.put('images.metadata.' + postData, postData);
 }
+
+// ROUTES FOR OUR APP
+// =============================================================================
+
+app.get('/', function (req, res) {
+    res.render('home');
+});
 
 // ROUTES FOR OUR API
 // =============================================================================
