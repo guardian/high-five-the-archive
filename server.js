@@ -24,7 +24,7 @@ app.set('view engine', 'handlebars');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8090;        // set our port
 
 // APP FUNCTIONS
 // =============================================================================
