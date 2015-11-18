@@ -28,7 +28,7 @@ app.set('view engine', 'handlebars');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8090;        // set our port
 
 // APP FUNCTIONS
 // =============================================================================
@@ -64,8 +64,8 @@ function ocrImage(imgObj) {
 	})
 }
 
-function storeMetadata(postData) {
-	store.put('images.metadata.' + postData, postData);
+function storeMetadata(postData, id) {
+	store.put('images.metadata.' + id, postData);
 }
 
 function getId(path) {
@@ -174,9 +174,16 @@ router.get('/images/:id', function(req, res) {
 	res.send(store.get('images.ocrText.' + req.params.id))
 });
 
-router.post('/item', function(req, res) {
-	storeMetadata(req.body);
+router.post('/item/:id', function(req, res) {
+	storeMetadata(req.body, req.params.id);
 	res.send('Saved');
+});
+
+app.get('/high-five/:id', function(req, res) {
+	var metadata = store.get('images.metadata.' + id);
+	var originalImage = 'original' + id
+
+	res.render('index', {metadata: metadata, imageUrl: originalImage})
 });
 
 // REGISTER OUR ROUTES -------------------------------
