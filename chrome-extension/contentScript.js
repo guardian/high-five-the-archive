@@ -20,8 +20,7 @@ function getStuffed() {
     for (var i = 1; i < metadataHTML.length; i++) {
         info.push({fieldName: fields[i-1], value: metadataHTML[i].innerText.replace(fields[i-1] + ' ', '')});
     }
-    console.log(info);
-    jQuery.post("http://httpbin.org/post", {id: file_id, metadata: JSON.stringify(info)}, function(resp) {
+    jQuery.post("http://localhost:8090/api/item/"+file_id, {id: file_id, metadata: JSON.stringify(info)}, function(resp) {
         console.log(resp);
     })
 

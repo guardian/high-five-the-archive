@@ -59,8 +59,8 @@ function ocrImage(imgObj) {
 	})
 }
 
-function storeMetadata(postData) {
-	store.put('images.metadata.' + postData, postData);
+function storeMetadata(postData, id) {
+	store.put('images.metadata.' + id, postData);
 }
 
 // ROUTES FOR OUR APP
@@ -102,8 +102,8 @@ router.get('/images/:id', function(req, res) {
 	res.send(store.get('images.ocrText.' + req.params.id))
 });
 
-router.post('/item', function(req, res) {
-	storeMetadata(req.body);
+router.post('/item/:id', function(req, res) {
+	storeMetadata(req.body, req.params.id);
 	res.send('Saved');
 });
 
