@@ -68,7 +68,9 @@ function ocrImage(imgObj) {
 }
 
 function storeMetadata(postData, id) {
-	store.put('images.metadata.' + id, postData);
+	console.log('PUTTING OUR METADATA')
+	console.log(postData.metadata.id)
+	store.put('images.'+id+'.metadata', postData.metadata);
 }
 
 function getId(path) {
@@ -147,11 +149,14 @@ app.get('/', function (req, res) {
 
 
 app.get('/high-five/:id', function(req, res) {
-	var metadata = store.get('images.metadata.' + req.params.id);
+	var metadata = JSON.parse(store.get('images.'+req.params.id+'.metadata.metadata'));
+	var title = metadata[0].value;
 	var originalPdf = '/original/' + req.params.id + '.pdf'
 	var imageUrl = '/tmp/' + req.params.id + '.png'
+	var ocrText = store.get('images.ocrText.'+req.params.id)
 
-	res.render('index', {metadata: metadata, imageUrl: imageUrl, pdfUrl: originalPdf})
+
+	res.render('index', {metadata: metadata, title: title, imageUrl: imageUrl, pdfUrl: originalPdf, ocrText: ocrText})
 });
 
 
